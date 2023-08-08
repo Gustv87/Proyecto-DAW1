@@ -41,11 +41,7 @@ laboratorio.get('/', (req, res) => {
         });
 });
 
-
-
-
-
-laboratorio.put('/api/laboratorio/:id', (req, res) => {
+laboratorio.put('/:id', (req, res) => {
     const idlab = req.params.id;
     const { nombre } = req.body;
 
@@ -68,29 +64,31 @@ laboratorio.put('/api/laboratorio/:id', (req, res) => {
         });
 });
 
-laboratorio.delete('/api/laboratorio/:id', (req, res) => {
-    const idHeroe = req.params.id;
 
-    const sql = `
-      UPDATE tbl_heroes 
-      SET activo = false, 
-          fecha_borrar = current_timestamp 
-      WHERE id = $1
-    `;
+laboratorio.delete('/:id', async (req, res) => {
+    try {
+        const sql = `
+            UPDATE tbl_laboratorio
+            SET activo = false, fecha_borrado = current_timestamp
+            WHERE id_lab = $1
+            RETURNING id_lab, fecha_borrado
+        `;
+        
+        const data = await db.oneOrNone(sql, [req.params.id]);
 
-    db.result(sql, [idHeroe], r => r.rowCount)
-        .then(data => {
-            const objetoBorrado = {
-                id: idHeroe,
-                activo: false
-            };
-            res.json(objetoBorrado);
-        })
-        .catch(error => {
-
-            res.json({ error: 'Hubo un error en el servidor al marcar el héroe como inactivo.' });
-        });
+        if (data) {
+            res.json({
+                id_lab: data.id_lab,
+                activo: false,
+                fecha_borrado: data.fecha_borrado
+            });
+        } else {
+            res.status(404).json({ error: 'Registro no encontrado' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error en la consulta a la base de datos' });
+    }
 });
-
 
 module.exports = laboratorio;
