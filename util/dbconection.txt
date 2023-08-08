@@ -1,0 +1,36 @@
+-- Crear la base de datos "reservaciones"
+CREATE DATABASE reservaciones;
+
+
+
+-- Crear la tabla tbl_usuario
+CREATE TABLE tbl_usuario (
+    id_usuario SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) NOT NULL,
+    contraseña VARCHAR(100) NOT NULL,
+    foto BYTEA
+);
+
+-- Crear la tabla tbl_laboratorio
+CREATE TABLE tbl_laboratorio (
+    id_lab SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL
+);
+
+-- Crear la tabla tbl_horarios
+CREATE TABLE tbl_horarios (
+    id_horario SERIAL PRIMARY KEY,
+    horaInicio TIME NOT NULL,
+    horaFinal TIME NOT NULL
+);
+
+-- Crear la tabla tbl_reservas
+CREATE TABLE tbl_reservas (
+    id_reserva SERIAL PRIMARY KEY,
+    id_lab INT NOT NULL REFERENCES tbl_laboratorio(id_lab),
+    id_horario INT NOT NULL REFERENCES tbl_horarios(id_horario),
+    id_usuario INT NOT NULL REFERENCES tbl_usuario(id_usuario),
+    fecha DATE NOT NULL
+);
