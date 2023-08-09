@@ -21,8 +21,6 @@ CREATE TABLE tbl_laboratorio(
     nombre character varying(100) NOT NULL,
     activo boolean DEFAULT true,
     fecha_borrado timestamp without time zone,
-    activo boolean DEFAULT true,
-    fecha_borrado timestamp without time zone,
     PRIMARY KEY(id_lab)
 );
 
