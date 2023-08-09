@@ -1,6 +1,6 @@
 const express = require('express');
 const laboratorio = express.Router();
-const db = require('../db/db');
+const db = require('../db/conn');
 
 laboratorio.post('/', (req, res) => {
     if (!req.body.nombre) {
