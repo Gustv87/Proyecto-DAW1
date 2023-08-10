@@ -9,6 +9,9 @@ app.use('/api/laboratorio', laboratorio);
 const horarios = require('./routes/horarios.js');
 app.use('/api/horarios', horarios);
 
+const reservas = require('./routes/reservas.js');
+app.use('/api/reservas',reservas);
+
 
 // Inicio del servidor
 const puerto = 3000;
