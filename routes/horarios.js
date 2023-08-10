@@ -88,7 +88,7 @@ app.delete('/:id_horario', (req,res)=>{
 
     let sql = `update tbl_horarios
                 set activo = false,
-                    fecha_borrar = current_timestamp
+                    fecha_borrado = current_timestamp
                 where id_horario = $1`;
 
     db.result(sql,[req.params.id_horario],r => r.rowCount) 
