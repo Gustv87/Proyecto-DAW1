@@ -1,86 +1,45 @@
 const express = require('express');
 const laboratorio = express.Router();
+const db = require('../db/conn');
 
-// <<<<<<< horarios
-// <<<<<<< Updated upstream
-// const db = require('../db/conn');
-// =======
-// const db = require('../db/conn');
+laboratorio.post('', (req, res) => {
+    let params =[
 
-// laboratorio.post('/', (req, res) => {
-//     if (!req.body.nombre) {
-//         res.status(400).json({ error: 'Falta el campo nombre' });
-//         return;
-//     }
-
- 
-
-//     let datos = [];
-
-//     let sql = `INSERT INTO tbl_reservas (nombre) VALUES ($1, $2, $3, $4, $5) 
-//                                                             RETURNING 
-//                             id_reserva, id_lab, id_horario, id_usuario, fecha, `;
-
-//     db.one(sql, datos)
-//         .then(data => {
-//             const objetoCreado = {
-//                 id: data.id_reserva,
-//                 id: data.id_lab,
-//                 id: data.id_horario,
-//                 id: data.id_usuario,
-//                 fecha: fecha
-//             };
-//             res.json(objetoCreado);
-//         })
-//         .catch(error => {
-//             console.error(error);
-//             res.status(500).json({ error: 'Error en la consulta a la base de datos' });
-//         });
-// });
-
-// laboratorio.get('/', (req, res) => {
-//     let sql = "SELECT * FROM tbl_reservas";
-// =======
-// const db = require('../db/conn');
-
-// laboratorio.post('', (req, res) => {
-//     let params =[
-
-//         req.body.id_lab,
-//         req.body.id_horario,
-//         req.body.id_usuario,
-//         req.body.fecha
-//       ];
+        req.body.id_lab,
+        req.body.id_horario,
+        req.body.id_usuario,
+        req.body.fecha
+      ];
 
  
 
         
 
-//     let sql = `INSERT INTO tbl_reservas (id_lab, id_horario, id_usuario, fecha) values ($1, $2, $3, $4) 
-//                                                             RETURNING id_reserva`;
-//      console.log(params)
+    let sql = `INSERT INTO tbl_reservas (id_lab, id_horario, id_usuario, fecha) values ($1, $2, $3, $4) 
+                                                            RETURNING id_reserva`;
+     console.log(params)
                                                 
 
-//     db.one(sql, params, event => event.id)
-//         .then(data => {
-//             const objetoCreado = {
-//                 id_reserva: data,  
-//                 id_lab: params[0],
-//                 id_horario: params[1],
-//                 id_usuario: params[2],
-//                 fecha: params[3]
-//             }
+    db.one(sql, params, event => event.id)
+        .then(data => {
+            const objetoCreado = {
+                id_reserva: data,  
+                id_lab: params[0],
+                id_horario: params[1],
+                id_usuario: params[2],
+                fecha: params[3]
+            }
 
-//             res.json(objetoCreado);
-//         })
-//         .catch(error => {
-//             res.json(error);
-//         });
-// });
+            res.json(objetoCreado);
+        })
+        .catch(error => {
+            res.json(error);
+        });
+});
 
-// laboratorio.get('', (req, res) => {
-//     let sql = "SELECT * FROM tbl_reservas ";
-// >>>>>>> main
+laboratorio.get('', (req, res) => {
+    let sql = "SELECT * FROM tbl_reservas ";
+
 
     db.any(sql, e => e.id)
         .then(rows => {
@@ -156,6 +115,4 @@ laboratorio.delete('/:id', async (req, res) => {
 });
 
 
-
 module.exports = laboratorio;
-
