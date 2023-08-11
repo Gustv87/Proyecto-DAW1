@@ -12,6 +12,9 @@ app.use('/api/horarios', horarios);
 const reservas = require('./routes/reservas.js');
 app.use('/api/reservas',reservas);
 
+const usuario = require('./routes/usuario.js');
+app.use('/api/usuario',usuario);
+
 
 // Inicio del servidor
 const puerto = 3000;

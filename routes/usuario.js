@@ -1,94 +1,114 @@
-// const express = require('express');
-// const usuario = express.Router();
-// const db = require('../db/conn');
+const express = require('express');
+const usuario = express.Router();
+const db = require('../db/conn');
 
-// usuario.post('/', (req, res) => {
-//     if (!req.body.nombre) {
-//         res.status(400).json({ error: 'Falta el campo nombre' });
-//         return;
-//     }
+usuario.post('/', async (req, res) => {
+    try {
+        if (!req.body.nombre || !req.body.apellido || !req.body.correo || !req.body.contrasenia || !req.body.id_rol) {
+            return res.status(400).json({ error: 'Faltan campos obligatorios' });
+        }
 
-    
+        const usuarios = [
+            req.body.nombre,
+            req.body.apellido,
+            req.body.correo,
+            req.body.contrasenia,
+            req.body.id_rol
+        ];
 
-//     let datos = [nombre, apellido, correo, contrasenia];
+        const sql = `
+            INSERT INTO tbl_usuario (nombre, apellido, correo, contrasenia, id_rol)
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING id_usuario
+        `;
 
-//     let sql = `INSERT INTO tbl_laboratorio (nombre) VALUES ($1) RETURNING id_lab`;
+        const data = await db.one(sql, usuarios);
 
-//     db.one(sql, datos)
-//         .then(data => {
-//             const objetoCreado = {
-//                 id: data.id_lab,
-//                 nombre: nombreLaboratorio,
-//             };
-//             res.json(objetoCreado);
-//         })
-//         .catch(error => {
-//             console.error(error);
-//             res.status(500).json({ error: 'Error en la consulta a la base de datos' });
-//         });
-// });
+        const objetoCreado = {
+            id: data.id_usuario,
+            nombre: req.body.nombre,
+            apellido: req.body.apellido,
+            correo: req.body.correo,
+            contrasenia: req.body.contrasenia,
+            id_rol: req.body.id_rol
+        };
 
-// usuario.get('/', (req, res) => {
-//     let sql = "SELECT * FROM tbl_laboratorio ";
+        res.json(objetoCreado);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error en la consulta a la base de datos', details: error.message });
+    }
+});
 
-//     db.any(sql, e => e.id)
-//         .then(rows => {
-//             res.setHeader('Content-Type', 'application/json');
-//             res.json(rows);
-//         })
-//         .catch((error) => {
-//             res.status(500).json({ error: 'Error en la consulta a la base de datos' });
-//         });
-// });
+usuario.get('/', (req, res) => {
+    let sql = "SELECT * FROM tbl_usuario";
 
-// usuario.put('/:id', (req, res) => {
-//     const idlab = req.params.id;
-//     const { nombre } = req.body;
+    db.any(sql, e => e.id)
+        .then(rows => {
+            res.setHeader('Content-Type', 'application/json');
+            res.json(rows);
+        })
+        .catch((error) => {
+            res.status(500).json({ error: 'Error en la consulta a la base de datos' });
+        });
+});
 
-//     const parametros = [nombre, idlab];
+usuario.put('/:id', async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const { nombre, apellido, correo, contrasenia, id_rol } = req.body;
+  
+      // Verifica que el usuario exista en la base de datos
+      const existingUser = await db.oneOrNone('SELECT * FROM tbl_usuario WHERE id_usuario = $1', userId);
+      if (!existingUser) {
+        return res.status(404).json({ error: 'Usuario no encontrado' });
+      }
+  
+      // Actualiza el usuario en la base de datos
+      const updatedUser = await db.one(
+        `UPDATE tbl_usuario
+         SET nombre = $1, apellido = $2, correo = $3, contrasenia = $4, id_rol = $5
+         WHERE id_usuario = $6
+         RETURNING *`,
+        [nombre, apellido, correo, contrasenia, id_rol, userId]
+      );
+  
+      res.json(updatedUser);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error en la consulta a la base de datos' });
+    }
+  });
 
-//     const sql = `
-//       UPDATE tbl_laboratorio 
-//       SET nombre = $1
-//       WHERE id_lab = $2
-//     `;
 
-//     db.query(sql, parametros)
-//         .then(data => {
-//             const objetoModificado = {
-//                 id_lab: idlab,
-//                 nombre: nombre
-//             };
+usuario.delete('/:id', async (req, res) => {
+    try {
+      const userId = req.params.id;
+  
+      // Verifica que el usuario exista en la base de datos
+      const existingUser = await db.oneOrNone('SELECT * FROM tbl_usuario WHERE id_usuario = $1', userId);
+      if (!existingUser) {
+        return res.status(404).json({ error: 'Usuario no encontrado' });
+      }
+  
+      // Desactiva el usuario en la base de datos
+      const sql = `
+        UPDATE tbl_usuario
+        SET activo = false, fecha_borrado = current_timestamp
+        WHERE id_usuario = $1
+        RETURNING id_usuario, fecha_borrado
+      `;
+      const data = await db.one(sql, [userId]);
+  
+      res.json({
+        id_usuario: data.id_usuario,
+        activo: false,
+        fecha_borrado: data.fecha_borrado
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error en la consulta a la base de datos' });
+    }
+  });
 
-//             res.json(objetoModificado);
-//         });
-// });
-
-
-// usuario.delete('/:id', async (req, res) => {
-//     try {
-//         const sql = `
-//             UPDATE tbl_laboratorio
-//             SET activo = false, fecha_borrado = current_timestamp
-//             WHERE id_lab = $1
-//             RETURNING id_lab, fecha_borrado
-//         `;
-        
-//         const data = await db.oneOrNone(sql, [req.params.id]);
-
-//         if (data) {
-//             res.json({
-//                 id_lab: data.id_lab,
-//                 activo: false,
-//                 fecha_borrado: data.fecha_borrado
-//             });
-//         } else {
-//             res.status(404).json({ error: 'Registro no encontrado' });
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ error: 'Error en la consulta a la base de datos' });
-//     }
-// });
-
-// module.exports = usuario;
+module.exports = usuario;
