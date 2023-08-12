@@ -29,7 +29,7 @@ laboratorio.post('/', (req, res) => {
 });
 
 laboratorio.get('/', (req, res) => {
-    let sql = "SELECT * FROM tbl_laboratorio ";
+    let sql = "SELECT * FROM tbl_laboratorio  where activo = true";
 
     db.any(sql, e => e.id)
         .then(rows => {

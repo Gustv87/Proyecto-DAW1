@@ -41,7 +41,7 @@ usuario.post('/', async (req, res) => {
 });
 
 usuario.get('/', (req, res) => {
-    let sql = "SELECT * FROM tbl_usuario";
+    let sql = "SELECT * FROM tbl_usuario where activo = true";
 
     db.any(sql, e => e.id)
         .then(rows => {

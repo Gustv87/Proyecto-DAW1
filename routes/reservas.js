@@ -38,7 +38,7 @@ laboratorio.post('', (req, res) => {
 });
 
 laboratorio.get('', (req, res) => {
-    let sql = "SELECT * FROM tbl_reservas ";
+    let sql = "SELECT * FROM tbl_reservas where activo = true";
 
 
     db.any(sql, e => e.id)
