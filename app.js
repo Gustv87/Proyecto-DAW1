@@ -15,6 +15,10 @@ app.use('/api/reservas',reservas);
 const usuario = require('./routes/usuario.js');
 app.use('/api/usuario',usuario);
 
+const rol = require('./routes/rol.js');
+app.use('/api/rol', rol);
+
+
 
 // Inicio del servidor
 const puerto = 3000;

@@ -80,7 +80,7 @@ app.put('/:id_horario', (req,res)=>{
     .catch((error)=>{
         res.json(error);
     })
-})
+});
 
 app.delete('/:id_horario', (req,res)=>{
 
