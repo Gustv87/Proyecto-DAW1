@@ -43,3 +43,10 @@ CREATE TABLE tbl_reservas (
     activo boolean DEFAULT true,
     fecha_borrado timestamp without time zone
 );
+
+
+CREATE TABLE tbl_login(
+    email character varying(255) NOT NULL,
+    password character varying(255) NOT NULL,
+    PRIMARY KEY(email)
+);
