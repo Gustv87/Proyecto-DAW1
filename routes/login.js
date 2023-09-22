@@ -19,8 +19,17 @@ usuario.post('/', (req, res) => {
       }
     })
     .catch((error) => {
-      res.status(500).json({ error: 'Error en la consulta a la base de datos' });
+      console.log("Error:", error);
+      if (error.response) {
+        console.log("Error Response:", error.response);
+        setError(error.response.data.error);
+      } else {
+        setError('Error de conexión');
+      }
     });
 });
+
+
+
 
 module.exports = usuario;
