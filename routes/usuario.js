@@ -4,7 +4,7 @@ const db = require('../db/conn');
 
 usuario.post('/', async (req, res) => {
     try {
-        if (!req.body.nombre || !req.body.apellido || !req.body.correo || !req.body.contrasenia || !req.body.id_rol) {
+        if (!req.body.nombre || !req.body.apellido || !req.body.correo || !req.body.contrasenia ) {
             return res.status(400).json({ error: 'Faltan campos obligatorios' });
         }
 
@@ -12,13 +12,13 @@ usuario.post('/', async (req, res) => {
             req.body.nombre,
             req.body.apellido,
             req.body.correo,
-            req.body.contrasenia,
-            req.body.id_rol
+            req.body.contrasenia
+            
         ];
 
         const sql = `
-            INSERT INTO tbl_usuario (nombre, apellido, correo, contrasenia, id_rol)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO tbl_usuario (nombre, apellido, correo, contrasenia)
+            VALUES ($1, $2, $3, $4)
             RETURNING id_usuario
         `;
 
@@ -29,8 +29,8 @@ usuario.post('/', async (req, res) => {
             nombre: req.body.nombre,
             apellido: req.body.apellido,
             correo: req.body.correo,
-            contrasenia: req.body.contrasenia,
-            id_rol: req.body.id_rol
+            contrasenia: req.body.contrasenia
+          
         };
 
         res.json(objetoCreado);
@@ -40,7 +40,7 @@ usuario.post('/', async (req, res) => {
     }
 });
 
-usuario.get('/', (req, res) => {
+usuario.get('', (req, res) => {
     let sql = "SELECT * FROM tbl_usuario where activo = true";
 
     db.any(sql, e => e.id)
@@ -56,7 +56,7 @@ usuario.get('/', (req, res) => {
 usuario.put('/:id', async (req, res) => {
     try {
       const userId = req.params.id;
-      const { nombre, apellido, correo, contrasenia, id_rol } = req.body;
+      const { nombre, apellido, correo, contrasenia } = req.body;
   
       // Verifica que el usuario exista en la base de datos
       const existingUser = await db.oneOrNone('SELECT * FROM tbl_usuario WHERE id_usuario = $1', userId);

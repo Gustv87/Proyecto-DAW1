@@ -1,13 +1,13 @@
 const express = require('express');
-const laboratorio = express.Router();
+const reservas = express.Router();
 const db = require('../db/conn');
 
-laboratorio.post('', (req, res) => {
+reservas.post('', (req, res) => {
     let params =[
 
-        req.body.id_lab,
-        req.body.id_horario,
-        req.body.id_usuario,
+        req.body.laboratorio,
+        req.body.horainicio,
+        req.body.usuario,
         req.body.fecha
       ];
 
@@ -15,7 +15,7 @@ laboratorio.post('', (req, res) => {
 
         
 
-    let sql = `INSERT INTO tbl_reservas (id_lab, id_horario, id_usuario, fecha) values ($1, $2, $3, $4) 
+    let sql = `INSERT INTO tbl_reservas (laboratorio, horainicio, usuario, fecha) values ($1, $2, $3, $4) 
                                                             RETURNING id_reserva`;
      console.log(params)
                                                 
@@ -24,9 +24,9 @@ laboratorio.post('', (req, res) => {
         .then(data => {
             const objetoCreado = {
                 id_reserva: data,  
-                id_lab: params[0],
-                id_horario: params[1],
-                id_usuario: params[2],
+                laboratorio: params[0],
+                horainicio: params[1],
+                usuario: params[2],
                 fecha: params[3]
             }
 
@@ -37,7 +37,7 @@ laboratorio.post('', (req, res) => {
         });
 });
 
-laboratorio.get('', (req, res) => {
+reservas.get('', (req, res) => {
     let sql = "SELECT * FROM tbl_reservas where activo = true";
 
 
@@ -51,7 +51,7 @@ laboratorio.get('', (req, res) => {
         });
 });
 
-laboratorio.put('/:id', (req, res) => {
+reservas.put('/:id', (req, res) => {
     const idlab = req.params.id;
     const { nombre } = req.body;
 
@@ -80,7 +80,7 @@ where fecha =$5
         });
 });
 
-laboratorio.delete('/:id_reserva', (req, res) => {
+reservas.delete('/:id_reserva', (req, res) => {
     let sql = ` update tbl_reservas
                 set activo = false , 
                     fecha_borrado = current_timestamp 
@@ -102,4 +102,4 @@ laboratorio.delete('/:id_reserva', (req, res) => {
 });
 
 
-module.exports = laboratorio;
+module.exports = reservas;
