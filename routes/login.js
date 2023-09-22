@@ -23,13 +23,12 @@ usuario.post('/', (req, res) => {
       if (error.response) {
         console.log("Error Response:", error.response);
         setError(error.response.data.error);
+      } else if (error.message === "Failed to fetch") {
+        setError("Network error. Please check your internet connection.");
       } else {
         setError('Error de conexión');
       }
     });
 });
-
-
-
 
 module.exports = usuario;
