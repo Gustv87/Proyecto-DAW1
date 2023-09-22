@@ -4,11 +4,11 @@ const db = require('../db/conn');
 
 usuario.post('/', (req, res) => {
   const correo = req.body.correo;
-  const password = req.body.password;
+  const contrasenia = req.body.contrasenia;
 
   // Verificar si el usuario existe en la base de datos
-  let sql = `SELECT correo, nombre, id_rol FROM tbl_usuario WHERE correo = $1 AND password = $2`;
-  db.oneOrNone(sql, [correo, password])
+  let sql = `SELECT correo, nombre FROM tbl_usuario WHERE correo = $1 AND contrasenia = $2`;
+  db.oneOrNone(sql, [correo, contrasenia])
     .then((data) => {
       if (data) {
         // El usuario existe, se puede iniciar sesión
