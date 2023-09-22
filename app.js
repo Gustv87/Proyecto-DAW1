@@ -26,6 +26,8 @@ app.use('/api/usuario',usuario);
 const rol = require('./routes/rol.js');
 app.use('/api/rol', rol);
 
+const login = require('./routes/login.js');
+app.use('/api/login', login);
 
 
 // Inicio del servidor
