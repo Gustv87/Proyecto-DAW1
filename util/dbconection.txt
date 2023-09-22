@@ -50,3 +50,11 @@ CREATE TABLE tbl_login(
     password character varying(255) NOT NULL,
     PRIMARY KEY(email)
 );
+-- Crear la tabla tbl_rol
+CREATE TABLE tbl_rol(
+    id_rol SERIAL NOT NULL,
+    nombre character varying(100) NOT NULL,
+    activo boolean DEFAULT true,
+    fecha_borrado timestamp without time zone,
+    PRIMARY KEY(id_rol)
+);
