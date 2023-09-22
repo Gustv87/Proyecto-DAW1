@@ -7,9 +7,10 @@ usuario.post('/', (req, res) => {
   const contrasenia = req.body.contrasenia;
 
   // Verificar si el usuario existe en la base de datos
-  let sql = `SELECT correo, nombre FROM tbl_usuario WHERE correo = $1 AND contrasenia = $2`;
-  db.oneOrNone(sql, [correo, contrasenia])
+  let sql = `SELECT correo, nombre, FROM tbl_usuario WHERE correo = $1 AND password = $2`;
+  db.oneOrNone(sql, [correo, password])
     .then((data) => {
+      console.log("🚀 ~ file: login.js:13 ~ .then ~ data:", data)
       if (data) {
         // El usuario existe, se puede iniciar sesión
         res.json({ mensaje: 'Inicio de sesión exitoso', user: data });
