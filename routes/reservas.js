@@ -1,6 +1,8 @@
 const express = require('express');
 const reservas = express.Router();
 const db = require('../db/conn');
+const laboratorio = require('./laboratorio');
+const usuario = require('./usuario');
 
 reservas.post('', (req, res) => {
     let params =[
@@ -51,28 +53,32 @@ reservas.get('', (req, res) => {
         });
 });
 
-reservas.put('/:id', (req, res) => {
-    const idlab = req.params.id;
-    const { nombre } = req.body;
+reservas.put('/:id_reserva', (req, res) => {
+    const id_reserva = req.params.id_reserva;
+    const { laboratorio } = req.body;
+    const { horainicio} = req.body;
+    const { usuario }= req.body;
+    const {fecha} = req.body;
 
-    const parametros = [nombre, idlab];
+    const parametros = [id_reserva, laboratorio, horainicio, usuario, fecha];
 
     const sql = `
       UPDATE tbl_reservas 
-      SET  id_reserva = $1
-       id_lab=$2
-       id_horario = $3
-       id_usuario= $4
-where fecha =$5
+      SET  laboratorio = $2,
+      horainicio = $3,
+      usuario= $4,
+      fecha = $5
+where id_reserva = $1
+      
     `;
 
     db.query(sql, parametros)
         .then(data => {
             const objetoModificado = {
-                id: id_reserva,
-                id: id_lab,
-                id: id_horario,
-                id: id_usuario,
+                id_reserva: id_reserva,
+                laboratorio: laboratorio,
+                horainicio: horainicio,
+                usuario: usuario,
                 fecha: fecha
             };
 
