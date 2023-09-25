@@ -3,45 +3,38 @@ const app = express.Router();
 const db = require('../db/conn');//conexion a la base de datos
 
 app.post('', (req, res) => {
-
-    let datos = [
-
+    try {
+      let datos = [
         req.body.horainicio,
         req.body.horafinal
-
-    ];
-
-    let sql = ` insert into tbl_horarios
-                (horainicio, horafinal)
-                values
-                ($1, $2) returning id_horario 
-                `;
-
-    db.one(sql, datos, event => event.id_horario)
+      ];
+  
+      let sql = `
+        INSERT INTO tbl_horarios (horainicio, horafinal)
+        VALUES ($1, $2)
+        RETURNING id_horario
+      `;
+  
+      db.one(sql, datos, event => event.id_horario)
         .then(data => {
-
-            const objetoCreado = {
-
-                id_horario: data,
-                horainicio: datos[0],
-                horafinal: datos[1]
-
-            }
-
-            res.json(objetoCreado);
-
+          const objetoCreado = {
+            id_horario: data.id_horario,
+            horainicio: datos[0],
+            horafinal: datos[1]
+          };
+  
+          res.status(200).json(objetoCreado);
         })
         .catch((error) => {
-
-            res.json(error);
-
+          console.error('Error en la consulta a la base de datos:', error);
+          res.status(500).json({ error: 'Error en la consulta a la base de datos' });
         });
-
-
-
-});
-
-
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+      res.status(400).json({ error: 'Error en la solicitud' });
+    }
+  });
+  
 
 app.get('',(req, res)=>{
 
