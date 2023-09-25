@@ -6,6 +6,7 @@ usuario.post('/', async (req, res) => {
   try {
     const correo = req.body.correo;
     const contrasenia = req.body.contrasenia;
+    let id_rol = req.body.id_rol || 2; // Asignar 2 como valor predeterminado si no se recibe id_rol en la solicitud POST
 
     // Verificar si el usuario existe en la base de datos
     const sql = `
@@ -33,6 +34,4 @@ usuario.post('/', async (req, res) => {
   }
 });
 
-
 module.exports = usuario;
-
